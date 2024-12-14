@@ -8,8 +8,6 @@ import cuda_malloc
 import translators as ts
 from tqdm import tqdm
 from datetime import timedelta
-input_path = folder_paths.get_input_directory()
-out_path = folder_paths.get_output_directory()
 
 class PreViewSRT:
     @classmethod
@@ -102,7 +100,7 @@ class WhisperX:
     def get_srt(self, audio,model_type,batch_size,if_mutiple_speaker,
                 use_auth_token,if_translate,translator,to_language):
         compute_type = "float16"
-
+        out_path = folder_paths.get_output_directory()
         base_name = os.path.basename(audio)[:-4]
         device = "cuda" if cuda_malloc.cuda_malloc_supported() else "cpu"
         # 1. Transcribe with original whisper (batched)
@@ -164,6 +162,7 @@ class WhisperX:
 class LoadAudioPath:
     @classmethod
     def INPUT_TYPES(s):
+        input_path = folder_paths.get_input_directory()
         files = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f)) and f.split('.')[-1] in ["wav", "mp3","WAV","flac","m4a"]]
         return {"required":
                     {"audio": (sorted(files),)},
